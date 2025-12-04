@@ -10,8 +10,8 @@ import numpy as np
 import warnings
 # supressing shapely warnings that occur on import of pvfactors
 warnings.filterwarnings(action='ignore', module='pvfactors')
-plt.style.use(['seaborn-ticks','pv-textbook.mplstyle']) 
-
+# plt.style.use(['seaborn-v0_8-ticks','pv-textbook.mplstyle']) 
+plt.style.use('seaborn-v0_8-ticks')
 
 def calculate_irradiance_bifacial(tilt, 
                                   orientation, 
@@ -83,7 +83,7 @@ color_v='darkorange'
 """
 
 #load measured data
-data=pd.read_csv('resources/clean_data.csv',
+data=pd.read_csv('C:/Users/alval/Desktop/agrivoltaic_foulum/data.csv',
                  index_col=0)
 
 data.index = pd.to_datetime(data.index, utc=True) 
@@ -160,6 +160,7 @@ DEFINE PARAMETERS FROM PILOT PLANT
 
 # We retrieve the PV modules and inverter specifications from the database at 
 # the NREL SAM (System Advisory Monitoring).
+
 sandia_modules = pvlib.pvsystem.retrieve_sam('SandiaMod') 
 module = sandia_modules['LG_LG290N1C_G3__2013_'] # module LG290N1C
 
@@ -259,6 +260,9 @@ am_abs = pvlib.atmosphere.get_absolute_airmass(airmass, pressure)
 # (function calculate_irradiance_bifacial)
 
 # vertical installation
+
+#EL NUEVO ERROR DA AQUI
+
 effective_irrad_bifi_v=calculate_irradiance_bifacial(tilt_v , 
                                                      orientation_v, 
                                                      bifaciality,
@@ -286,6 +290,7 @@ ax0.plot(dc_power_v['p_mp']*(1/44.4),
          label='vertical modeled power')
 
 # tilted installation
+
 effective_irrad_bifi_t=calculate_irradiance_bifacial(tilt_t, 
                                                      orientation_t,
                                                      bifaciality,
@@ -324,9 +329,14 @@ ax0.legend(fontsize=22, bbox_to_anchor=(1.01, 0.5))
 """
 
 # We retrieve typical meteorological year (TMY) data from PVGIS.
-tmy, _, _, _ = pvlib.iotools.get_pvgis_tmy(latitude=lat, 
-                                           longitude=lon, 
-                                           map_variables=True)
+# tmy, _, _, _ = pvlib.iotools.get_pvgis_tmy(latitude=lat, 
+#                                           longitude=lon, 
+#                                          map_variables=True)
+tmy, _ = pvlib.iotools.get_pvgis_tmy(
+    latitude=lat,
+    longitude=lon,
+    map_variables=True
+)
 
 tmy.index = tmy.index.tz_convert(tz) # use local time
 solar_position = location.get_solarposition(times=tmy.index)
@@ -427,7 +437,7 @@ Add electricity demand in Denmark in 2019
 """
 
 #electricity demand in Denmark 2019
-demand=pd.read_csv('data/electricity_demand_Denmark/time_series_60min_singleindex_filtered.csv',
+demand=pd.read_csv('C:/Users/alval/Desktop/agrivoltaic_foulum/data/electricity_demand_Denmark/time_series_60min_singleindex_filtered.csv',
                  index_col=0)
 
 demand.index = pd.to_datetime(demand.index, utc=True) 
@@ -556,5 +566,5 @@ ax2.grid('--')
 ax2.set_ylim([0.16, 0.21])
 ax2.legend(fontsize=22, loc='lower right') #, bbox_to_anchor=(1.4, 0.4))
 
-plt.savefig('Figures/figure_paper.jpg', 
+plt.savefig('C:/Users/alval/Desktop/agrivoltaic_foulum/Figures/figure_paper.jpg', 
                 dpi=100, bbox_inches='tight')
